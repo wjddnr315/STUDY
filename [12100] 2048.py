@@ -1,35 +1,50 @@
+from copy import deepcopy
+
 n = int(input())
 res = 0
 
 
-def squeeze(board):
-    _len = len(board)
-    i = j = 0
-    while True:
-        if board[i][j] == 0:
-            del board[i][j]
-            _len -= 1
+def pass_zero(board):
+    global n
+
+    i = 0
+    while i < n:
+        if 0 in board[i]:
+            board[i].remove(0)
         else:
-            j += 1
-            if j == _len:
-                j = 0
-                i += 1
-        if i == j == n:
-            break
-    print(board)
+            i += 1
+
+    for i in range(n):
+        for _ in range(n - len(board[i])):
+            board[i].append(0)
+    return board
+
+
+def squeeze(board):
+    global n
+    i = 0
+
+    board = pass_zero(deepcopy(board))
+
+    for i in range(n):
+        for j in range(n - 1):
+            if board[i][j] == board[i][j + 1]:
+                board[i][j] *= 2
+                board[i][j + 1] = 0
+
+    board = pass_zero(deepcopy(board))
+
+    return board
 
 
 def rotate(cnt, board):
-    _len = len(board)
+    global n
     for _ in range(cnt):
-        new_board = [[0 for _ in range(_len)] for _ in range(_len)]
-        for i in range(_len):
-            for j in range(_len):
+        new_board = [[0 for _ in range(n)] for _ in range(n)]
+        for i in range(n):
+            for j in range(n):
                 new_board[i][j] = board[j][n - i - 1]
         board = new_board
-        for i in board:
-            print(i)
-        print()
     return board
 
 
@@ -38,11 +53,11 @@ def move(board, cnt, direction):
     global n
     if cnt == 5:
         res = max(res, max([max(i) for i in board]))
-    board = rotate(direction)
-    board = squeeze(board)
+        return
+    board = squeeze(rotate(direction, deepcopy(board)))
 
     for i in range(4):
-        move(board, cnt + 1, i)
+        move(deepcopy(board), cnt + 1, i)
 
 
 board = []
@@ -50,4 +65,7 @@ board = []
 for i in range(n):
     board.append(list(map(int, input().split())))
 
-squeeze(board)
+for i in range(4):
+    move(deepcopy(board), 0, i)
+
+print(res)
