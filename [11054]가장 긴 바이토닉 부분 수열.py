@@ -9,5 +9,8 @@ for i in range(n):
             x[i] = max(x[i], x[j] + 1)
         if r_a[i] > r_a[j]:
             y[i] = max(y[i], y[j] + 1)
+        print(i, x)
+
 y.reverse()
+print(x)
 print(max(list(x[i] + y[i] for i in range(n))) - 1)
