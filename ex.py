@@ -1,18 +1,30 @@
-def can(n, r):
-    for i in list(str(n)):
-        if i in r:
-            return False
-    return True
+def build(board, blocks):
+    time = 0
+    for row in board:
+        for i in row:
+            if floor < i:
+                time += (i - floor) * 2
+                blocks += (i - floor)
+    for row in board:
+        for i in row:
+            if floor > i:
+                if blocks < floor - i:
+                    return False, time
+                time += (floor - i)
+                blocks -= (floor - i)
+    return True, time
 
 
-n = int(input())
-r = input().split() if int(input()) else []
-c = 0
-res = abs(100 - n)
-while c <= 500000:
-    if can(n - c, r):
-        res = min(res, c + len(str(n - c)))
-    if can(n + c, r):
-        res = min(res, c + len(str(n + c)))
-    c += 1
-print(res)
+n, m, b = map(int, input().split())
+board = [list(map(int, input().split())) for _ in range(n)]
+floor = 0
+results = []
+
+while floor <= 256:
+    res, time = build(board, b)
+    if res:
+        results.append([time, floor])
+    floor += 1
+
+results.sort(key=lambda x: (x[0], -x[1]))
+print(*results[0], sep=' ')
